@@ -16,6 +16,9 @@ public class JwtValidationGatewayFilterFactory extends
 
   public JwtValidationGatewayFilterFactory(WebClient.Builder webClientBuilder,
       @Value("${auth.service.url}") String authServiceUrl) {
+    if (authServiceUrl == null || authServiceUrl.isBlank()) {
+      throw new IllegalArgumentException("auth.service.url must not be null or empty");
+    }
     this.webClient = webClientBuilder.baseUrl(authServiceUrl).build();
   }
 
@@ -35,7 +38,11 @@ public class JwtValidationGatewayFilterFactory extends
           .header(HttpHeaders.AUTHORIZATION, token)
           .retrieve()
           .toBodilessEntity()
-          .then(chain.filter(exchange));
+          .then(chain.filter(exchange))
+          .onErrorResume(e -> {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+          });
     };
   }
 }
