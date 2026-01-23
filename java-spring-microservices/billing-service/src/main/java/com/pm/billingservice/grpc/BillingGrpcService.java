@@ -18,16 +18,21 @@ public class BillingGrpcService extends BillingServiceImplBase {
   public void createBillingAccount(BillingRequest billingRequest,
       StreamObserver<BillingResponse> responseObserver) {
 
-      log.info("createBillingAccount request received {}", billingRequest.toString());
+      try {
+          log.info("createBillingAccount request received {}", billingRequest.toString());
 
-      // Business logic - e.g save to database, perform calculates etc
+          // Business logic - e.g save to database, perform calculates etc
 
-      BillingResponse response = BillingResponse.newBuilder()
-          .setAccountId("12345")
-          .setStatus("ACTIVE")
-          .build();
+          BillingResponse response = BillingResponse.newBuilder()
+              .setAccountId("12345")
+              .setStatus("ACTIVE")
+              .build();
 
-      responseObserver.onNext(response);
-      responseObserver.onCompleted();
+          responseObserver.onNext(response);
+          responseObserver.onCompleted();
+      } catch (Exception e) {
+          log.error("Error creating billing account", e);
+          responseObserver.onError(e);
+      }
   }
 }

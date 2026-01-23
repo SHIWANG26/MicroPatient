@@ -106,10 +106,11 @@
         </configuration>
         <executions>
           <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>compile-custom</goal>
-            </goals>
+            <phase>generate-sources</phase>
+              <goals>
+                <goal>compile</goal>
+                <goal>compile-custom</goal>
+              </goals>
           </execution>
         </executions>
       </plugin>
