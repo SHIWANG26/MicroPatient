@@ -1,56 +1,41 @@
 @echo off
 echo ========================================
-echo Starting Full Stack Application
+echo  MicroPatient - Full Stack Startup
 echo ========================================
 echo.
 
 cd /d "%~dp0"
 
-echo [1/2] Starting Backend Services...
+echo [1/2] Starting backend services (Docker)...
 cd java-spring-microservices
-echo Building and starting Docker containers...
 docker-compose up -d --build
-echo Waiting for services to initialize...
-timeout /t 20 /nobreak >nul
-echo.
-echo Service Status:
-docker-compose ps
-cd ..
-
-echo.
-echo [2/2] Starting Frontend...
-cd micropatient-frontend
-
-if not exist node_modules (
-    echo Installing dependencies...
-    call npm install
+if errorlevel 1 (
+    echo ERROR: Failed to start backend. Is Docker running?
+    pause
+    exit /b 1
 )
 
 echo.
-echo ========================================
-echo Starting Next.js development server...
-echo ========================================
-echo Frontend will be available at: http://localhost:3000
-echo Backend API Gateway: http://localhost:4004
+echo Waiting for backend services to be ready...
+timeout /t 20 /nobreak >nul
+
 echo.
-echo Test Credentials:
-echo   Email: testuser@test.com
-echo   Password: password1234
-echo.
-start cmd /k "npm run dev"
+echo [2/2] Starting frontend (Next.js)...
+cd ..\micropatient-frontend
+start "MicroPatient Frontend" cmd /k "npm run dev"
 
 echo.
 echo ========================================
-echo Full Stack Started!
+echo  Ready! Open http://localhost:3000
 echo ========================================
 echo.
-echo Services:
-echo   Frontend:        http://localhost:3000
-echo   API Gateway:     http://localhost:4004
-echo   Patient Service: http://localhost:4000
-echo   Auth Service:    http://localhost:4005
+echo Test credentials:
+echo   Email:    testuser@test.com
+echo   Password: password1234
 echo.
-echo View logs: cd java-spring-microservices ^&^& docker-compose logs -f
-echo Stop services: cd java-spring-microservices ^&^& docker-compose down
+echo Backend services:
+echo   API Gateway:  http://localhost:4004
+echo   Auth:         http://localhost:4005
+echo   Patient:      http://localhost:4000
 echo.
 pause

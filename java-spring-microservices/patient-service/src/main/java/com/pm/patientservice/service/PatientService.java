@@ -35,6 +35,12 @@ public class PatientService {
     return patients.stream().map(PatientMapper::toDTO).toList();
   }
 
+  public PatientResponseDTO getPatientById(UUID id) {
+    Patient patient = patientRepository.findById(id).orElseThrow(
+        () -> new PatientNotFoundException("Patient not found with ID: " + id));
+    return PatientMapper.toDTO(patient);
+  }
+
   public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) {
     if (patientRepository.existsByEmail(patientRequestDTO.getEmail())) {
       throw new EmailAlreadyExistsException(
