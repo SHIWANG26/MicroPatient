@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Patient, CreatePatientDTO, UpdatePatientDTO, LoginCredentials, AuthResponse } from '@/types';
+import type { Patient, CreatePatientDTO, UpdatePatientDTO, LoginCredentials, RegisterCredentials, AuthResponse } from '@/types';
 
 // Prefer gateway URLs so CORS and JWT validation happen in one place.
 // If no env vars are set, we use relative paths and let Next.js rewrites proxy to the gateway.
@@ -31,6 +31,11 @@ export const authAPI = {
     const response = await axios.post(`${AUTH_BASE}/auth/login`, credentials);
     return response.data;
   },
+
+  register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
+    const response = await axios.post(`${AUTH_BASE}/auth/register`, credentials);
+    return response.data;
+  },
   
   validateToken: async (token: string): Promise<boolean> => {
     try {
@@ -41,6 +46,14 @@ export const authAPI = {
     } catch {
       return false;
     }
+  },
+
+  forgotPassword: async (email: string, newPassword: string): Promise<void> => {
+    await axios.post(`${AUTH_BASE}/auth/forgot-password`, { email, newPassword });
+  },
+
+  changePassword: async (currentPassword: string, newPassword: string): Promise<void> => {
+    await apiClient.post('/auth/change-password', { currentPassword, newPassword });
   }
 };
 

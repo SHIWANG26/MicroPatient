@@ -44,4 +44,12 @@ public class JwtUtil {
       throw new JwtException("Invalid JWT");
     }
   }
+
+  public String getEmailFromToken(String token) {
+    return Jwts.parser().verifyWith((SecretKey) secretKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .getSubject();
+  }
 }

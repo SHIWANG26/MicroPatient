@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { patientAPI } from '@/lib/api';
 import type { Patient } from '@/types';
 import Link from 'next/link';
-import { Users, UserPlus, LogOut, Activity } from 'lucide-react';
+import { Users, UserPlus, LogOut, Activity, Key } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -59,13 +59,22 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold text-gray-900">MicroPatient Dashboard</h1>
             <p className="text-sm text-gray-600">Welcome, {user?.email}</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-          >
-            <LogOut size={20} />
-            Logout
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/change-password"
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+            >
+              <Key size={20} />
+              Change Password
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+            >
+              <LogOut size={20} />
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 

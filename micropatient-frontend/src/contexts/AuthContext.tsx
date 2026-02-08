@@ -2,12 +2,13 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authAPI } from '@/lib/api';
-import type { LoginCredentials } from '@/types';
+import type { LoginCredentials, RegisterCredentials } from '@/types';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: { email: string } | null;
   login: (credentials: LoginCredentials) => Promise<void>;
+  register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => void;
   loading: boolean;
 }
@@ -41,7 +42,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (credentials: LoginCredentials) => {
     const response = await authAPI.login(credentials);
-    // Backend returns only a token; keep the email from the login form for UI display.
+    localStorage.setItem('jwt_token', response.token);
+    localStorage.setItem('user_email', credentials.email);
+    setIsAuthenticated(true);
+    setUser({ email: credentials.email });
+  };
+
+  const register = async (credentials: RegisterCredentials) => {
+    const response = await authAPI.register(credentials);
     localStorage.setItem('jwt_token', response.token);
     localStorage.setItem('user_email', credentials.email);
     setIsAuthenticated(true);
@@ -56,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
